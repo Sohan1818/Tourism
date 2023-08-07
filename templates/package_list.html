@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} | Packages{% endblock title %}Packages
+{% block content %}
+<body>
+ <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+   <div class="container">
+     <a class="navbar-brand" href="index.html">Tourism<span>Travel Agency</span></a>
+     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+       <span class="oi oi-menu"></span> Menu
+   </button>
+
+   <div class="collapse navbar-collapse" id="ftco-nav">
+       <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a href="{%url 'home'%}" class="nav-link">Home</a></li>
+				<li class="nav-item"><a href="{%url 'about'%}" class="nav-link">About</a></li>
+         <li class="nav-item active"><a href={%url 'package_list'%} class="nav-link">Packages</a></li>
+         {% if user.is_authenticated %}
+                    {% if user.is_manager %}
+                    <li class="nav-item"><a href={%url 'manager_dashboard'%} class="nav-link">Dashboard</a></li>
+                    {% endif %}
+					{%if user.is_authenticated and user.is_superuser %}
+					<li class="nav-item"><a href="/admin" class="nav-link">Admin Panel</a></li>
+					
+					{% endif %}
+
+					<li class="nav-item"><a href={%url 'cart'%} class="nav-link">Cart</a></li>
+          <li class="nav-item"><a href={%url 'orders'%} class="nav-link">Orders</a></li>
+					<li class="nav-item"><a href={%url 'logout'%} class="nav-link">Logout</a></li>
+					{% else %}
+					<li class="nav-item"><a href={%url 'user_signup'%} class="nav-link">Sign up</a></li>
+					<li class="nav-item"><a href={%url 'login'%} class="nav-link">Login</a></li>
+					{% endif %}
+         
+         <li class="nav-item"><a href={%url "contact"%} class="nav-link">Contact</a></li>
+     </ul>
+ </div>
+</div>
+</nav>
+<!-- END nav -->
+
+<section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url({%static 'images/package-3.jpg'%});">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-center">
+      <div class="col-md-9 ftco-animate pb-5 text-center">
+         <p class="breadcrumbs"><span class="mr-2"><a href={%url 'home'%}>Home <i class="fa fa-chevron-right"></i></a></span> <span>Tour List <i class="fa fa-chevron-right"></i></span></p>
+         <h1 class="mb-0 bread">Tours List</h1>
+     </div>
+ </div>
+</div>
+</section>
+   
+<section class="ftco-section">
+  
+   <div class="container">
+
+    <div class="row">
+      {% for package in packages %}
+       <div class="col-md-4 ftco-animate">
+          <div class="project-wrap">
+             <a href={% url 'package_detail' package.pk %} class="img" style="background-image: url({%static 'images/package-1.jpg'%});">
+                <span class="price">from {{package.price}}</span>
+            </a>
+            <div class="text p-4">
+                <span class="days">{{package.duration}} Days Tour</span>
+                <h3><a href="{% url 'package_detail' package.pk %}">{{ package.name }}</a></h3>
+                <p class="location"><span class="fa fa-map-marker"></span> From: {{package.source}}</p>
+                <ul>
+                   <li><span class="flaticon-shower"></span>Food</li>
+                   <li><span class="flaticon-king-size"></span>Accommodation</li>
+                   <li><span class="flaticon-mountains"></span>{{package.start_date}}</li>
+               </ul>
+           </div>
+       </div>
+   </div>
+   {% empty %}
+      <li>No packages available at this time.</li>
+    {% endfor %}
+   
+
+</div>
+</div>
+
+</div>
+</section>
+
+{% endblock content %}
+
+

@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} | Packages | {{package.name}}{% endblock title %}
+{% block content %}
+<body>
+ <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+   <div class="container">
+     <a class="navbar-brand" href="index.html">Tourism<span>Travel Agency</span></a>
+     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+       <span class="oi oi-menu"></span> Menu
+   </button>
+
+   <div class="collapse navbar-collapse" id="ftco-nav">
+       <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a href="{%url 'home'%}" class="nav-link">Home</a></li>
+				<li class="nav-item"><a href="{%url 'about'%}" class="nav-link">About</a></li>
+         <li class="nav-item active"><a href={%url 'package_list'%} class="nav-link">Packages</a></li>
+         {% if user.is_authenticated %}
+                    {% if user.is_manager %}
+                    <li class="nav-item"><a href={%url 'manager_dashboard'%} class="nav-link">Dashboard</a></li>
+                    {% endif %}
+					{%if user.is_authenticated and user.is_superuser %}
+					<li class="nav-item"><a href="/admin" class="nav-link">Admin Panel</a></li>
+					
+					{% endif %}
+
+					<li class="nav-item"><a href={%url 'cart'%} class="nav-link">Cart</a></li>
+          <li class="nav-item"><a href={%url 'orders'%} class="nav-link">Orders</a></li>
+					<li class="nav-item"><a href={%url 'logout'%} class="nav-link">Logout</a></li>
+					{% else %}
+					<li class="nav-item"><a href={%url 'user_signup'%} class="nav-link">Sign up</a></li>
+					<li class="nav-item"><a href={%url 'login'%} class="nav-link">Login</a></li>
+					{% endif %}
+         
+         <li class="nav-item"><a href={%url "contact"%} class="nav-link">Contact</a></li>
+     </ul>
+ </div>
+</div>
+</nav>
+<!-- END nav -->
+
+<section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url({%static 'images/package-3.jpg'%});">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-center">
+      <div class="col-md-9 ftco-animate pb-5 text-center">
+         <p class="breadcrumbs"><span class="mr-2"><a href={%url 'home'%}>Home <i class="fa fa-chevron-right"></i></a></span> <span>Tour List <i class="fa fa-chevron-right"></i></span></p>
+         <h1 class="mb-0 bread">Package Details : {{ package.name }}</h1>
+     </div>
+ </div>
+</div>
+</section>
+
+
+   
+<section class="ftco-section ftco-about img"style="background-image: url({%static 'images/bg_4.jpg'%});">
+  <div class="overlay"></div>
+  <div class="container py-md-5">
+    <div class="row py-md-5">
+      <div class="col-md d-flex align-items-center justify-content-center">
+        <a href="https://vimeo.com/45830194" class="icon-video popup-vimeo d-flex align-items-center justify-content-center mb-4">
+          <span class="fa fa-play"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="ftco-section ftco-about ftco-no-pt img">
+  <div class="container">
+    <div class="row d-flex">
+      <div class="col-md-12 about-intro">
+        <div class="row">
+          <div class="col-md-6 d-flex align-items-stretch">
+            <div class="img d-flex w-100 align-items-center justify-content-center" style="background-image:url({%static 'images/package-1.jpg'%});">
+            </div>
+          </div>
+          <div class="col-md-6 pl-md-5 py-5">
+            <div class="row justify-content-start pb-3">
+              <div class="col-md-12 heading-section ftco-animate">
+                
+                <h1>{{ package.name }}</h1>
+  
+
+  <h1>{{ package.title }}</h1>
+  <p>{{ package.description }}</p>
+  <p><strong>Duration:</strong> {{ package.duration }} days</p>
+  <p><strong>Price:</strong> {{ package.price }} Rupees</p>
+  <p><strong>Start Location:</strong> {{ package.source }}</p>
+  <p><strong>Start date:</strong> {{ package.start_date }}</p>
+  <p><strong>Locations covered:</strong> </p>
+  {% for place in places  %}
+  <li><span class="flaticon"></span>{{place.place}}</li>
+  {% endfor %}
+  
+  <form method="post">
+    {% csrf_token %}
+    <label for="accommodation"><strong>Select Accommodation:</strong></label>
+    <select name="accommodation" id="accommodation">
+      <option value="">--None--</option>
+      {% for accommodation in accommodations %}
+        <option value="{{ accommodation.id }}">{{ accommodation.name }} - {{ accommodation.price }} Rupees per night</option>
+      {% endfor %}
+    </select>
+
+    <br>
+
+    <label for="food"><strong>Select Food:</strong></label>
+    <select name="food" id="food">
+      <option value="">--None--</option>
+      {% for food in foods %}
+        <option value="{{ food.id }}">{{ food.name }} - {{ food.price }} Rupees per meal</option>
+      {% endfor %}
+    </select>
+
+    <br>
+    {% if accommodation %}
+    <p>Selected accommodation price: {{ accommodation.name }}</p>
+    <p>Selected accommodation price: {{ accommodation.price }}</p>
+    {% else %}
+    <p>No accommodation selected</p>
+    {% endif %}
+    {% if food %}
+    <p>Selected food price: {{ food.name }}</p>
+    <p>Selected food price: {{ food.price }}</p>
+    {% else %}
+    <p>No food selected</p>
+    {% endif %}
+    <p>{{total_price}}</p>
+    <input type="hidden" name="package_id" value="{{ package.id }}">
+    <input type="hidden" name="duration" value="{{ package.duration }}">
+    <input type="hidden" name="package_price" value="{{ package.price }}">
+    <button type="submit" class="btn btn-primary" name="action" value="calculate_amount">Calculate amount</button>
+    {% if request.user.is_authenticated %}
+    <button type="submit" class="btn btn-primary" name="action" value="add_to_cart">Add to cart</button>
+    {% else %}
+    <p>You must be a logged in user to add to cart and place order!</p>
+    {% endif %}
+  </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="row mt-5">
+  <div class="col text-center">
+    <div class="block-27">
+      <ul>
+        <li><a href="#">&lt;</a></li>
+        <li class="active"><span>1</span></li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li><a href="#">4</a></li>
+        <li><a href="#">5</a></li>
+        <li><a href="#">&gt;</a></li>
+    </ul>
+</div>
+</div>
+</div>
+</div>
+</section>
+{% endblock content %}
+
+

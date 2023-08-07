@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}| Ticket{% endblock title %}
+{% block content %}
+<body>
+ <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+   <div class="container">
+     <a class="navbar-brand" href={%url 'home'%}>Tourism<span>Travel Agency</span></a>
+     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+       <span class="oi oi-menu"></span> Menu
+     </button>
+
+     <div class="collapse navbar-collapse" id="ftco-nav">
+       <ul class="navbar-nav ml-auto">
+         <li class="nav-item"><a href={%url 'home'%} class="nav-link">Home</a></li>
+         <li class="nav-item"><a href="{%url 'about'%}" class="nav-link">About</a></li>
+         <li class="nav-item"><a href={%url 'package_list'%} class="nav-link">Packages</a></li>
+         {% if user.is_authenticated %}
+                    {% if user.is_manager %}
+                    <li class="nav-item"><a href={%url 'manager_dashboard'%} class="nav-link">Dashboard</a></li>
+                    {% endif %}
+					{%if user.is_authenticated and user.is_superuser %}
+					<li class="nav-item"><a href="/admin" class="nav-link">Admin Panel</a></li>
+					
+					{% endif %}
+
+					<li class="nav-item active"><a href={%url 'cart'%} class="nav-link">Cart</a></li>
+          <li class="nav-item"><a href={%url 'orders'%} class="nav-link">Orders</a></li>
+					<li class="nav-item"><a href={%url 'logout'%} class="nav-link">Logout</a></li>
+					{% else %}
+					<li class="nav-item"><a href={%url 'user_signup'%} class="nav-link">Sign up</a></li>
+					<li class="nav-item"><a href={%url 'login'%} class="nav-link">Login</a></li>
+					{% endif %}
+       
+         <li class="nav-item"><a href={%url "contact"%} class="nav-link">Contact</a></li>
+       </ul>
+     </div>
+   </div>
+ </nav>
+ <!-- END nav -->
+ 
+ <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url({%static 'images/ticket.jpg'%});">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-center">
+      <div class="col-md-9 ftco-animate pb-5 text-center">
+       <p class="breadcrumbs"><span class="mr-2"><a href={%url 'home'%}>Home <i class="fa fa-chevron-right"></i></a></span> <span>Ticket <i class="fa fa-chevron-right"></i></span></p>
+       <h1 class="mb-0 bread">Ticket</h1>
+     </div>
+   </div>
+ </div>
+</section>
+    
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-8">
+        <div class="card ticket-card">
+          <div class="card-body">
+            <h2 class="card-title text-center mb-5">Your Package Ticket</h2>
+            <div class="row">
+              <div class="col-6">
+                <div class="ticket-info">
+                  <h5 class="text-muted">Package Name:</h5>
+                  <h4 class="text-primary">{{ package.name }}</h4>
+                  <h5 class="text-muted">Total Price:</h5>
+                  <h4 class="text-primary">{{ total_price }}</h4>
+                  <h5 class="text-muted">Duration:</h5>
+                  <h4 class="text-primary">{{ package.duration }}</h4>
+                  <h5 class="text-muted">Location:</h5>
+                  <h4 class="text-primary">{{ package.source }}</h4>
+                  <h5 class="text-muted">Food:</h5>
+                  <h4 class="text-primary">{{ food.name }}</h4>
+                  <h5 class="text-muted">Food(price per meal):</h5>
+                  <h4 class="text-primary">{{ food.price }}</h4>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="ticket-info">
+                  <h5 class="text-muted">Passenger Name:</h5>
+                  <h4 class="text-primary">{{ user }}</h4>
+                  <h5 class="text-muted">Booking Date:</h5>
+                  <h4 class="text-primary">{{ order.created_at }}</h4>
+                  <h5 class="text-muted">Travel Date:</h5>
+                  <h4 class="text-primary">{{ package.start_date }}</h4>
+                  <h5 class="text-muted">Booking ID:</h5>
+                  <h4 class="text-primary">{{ order.order_id }}</h4>
+                  <h5 class="text-muted">Accommodation:</h5>
+                  <h4 class="text-primary">{{ accommodation.name }}</h4>
+                  <h5 class="text-muted">Accommodation(price per day):</h5>
+                  <h4 class="text-primary">{{ accommodation.price }}</h4>
+                </div>
+              </div>
+            </div>
+            <p class="text-center mt-5"><small>Thank you for choosing our service. We hope you have a pleasant journey!</small></p>
+            <center>
+            <form method="post">
+              {% csrf_token %}
+              <input type="hidden" name="cart_id" value="{{ cart_id }}">
+              <input type="hidden" name="package_id" value="{{ package_id }}">
+              <input type="submit" class="btn btn-success" value="Download Ticket">
+          </form>
+        </center>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+
+  <!-- Bootstrap 5 scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock content %}
+
